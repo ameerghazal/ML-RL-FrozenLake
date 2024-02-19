@@ -67,7 +67,7 @@ def run(episodes, render=False):
         sum_rewards[t] = np.sum(rewardsPerEpisode[max(0,t-100):(t+1)])
     plt.plot(sum_rewards)
     plt.xlabel("Episodes: Iterations")
-    plt.ylabel("Need")
+    plt.ylabel("Sum of rewards during episodes")
     plt.savefig("QLearningFrozenLake.png")
 
 
