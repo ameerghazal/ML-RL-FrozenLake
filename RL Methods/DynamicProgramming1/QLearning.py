@@ -22,7 +22,7 @@ def run(episodes, render=False):
     gamma = 0.9
 
 
-    #100% random actions
+    #100% random actions; epsilon is the value that determines exploration vs. explotation.
     epsilon = 1
     #epsilon decay rate | 1/0.0001 = 10,000
     epsilon_decay = 0.0001
@@ -41,12 +41,12 @@ def run(episodes, render=False):
         truncated = False
 
         # This entire iteration is an episode.,=
-        while(terminated or truncated):
+        while(not terminated and not truncated):
             # Check if a random number (between 0-0.99) is less than epsilon. # If so, we take a random action (explore).
             if randomNum.random() < epsilon:
                 action = env.action_space.sample() #generate random action | actions: 0=left, 1=down, 2=right, 3=up
             else:
-                action = np.argmax(Q[state,:]) # Otherwise, we take a greedy action based on the data we have from Q matrix. 
+                action = np.argmax(Q[state,:]) # Otherwise, we take a greedy action based on the data we have from Q matrix (exploit). 
 
             # Take actuin A, observe reward and next state.
             new_state,reward,terminated,truncated,_ = env.step(action)
@@ -69,6 +69,20 @@ def run(episodes, render=False):
         if reward == 1:
             rewardsPerEpisode[i] = 1
 
+    '''
+    # Evaluate policy
+    total_reward = 0
+    num_episodes = 100
+    for _ in range(num_episodes):
+        state = env.reset()
+        done = False
+        while not done:
+            action = np.argmax(Q[state, :])
+            state, reward, done, _ = env.step(action)
+            total_reward += reward
+
+    print("Average reward:", total_reward / num_episodes)
+    '''
     env.close()
 
 
@@ -80,6 +94,8 @@ def run(episodes, render=False):
     plt.xlabel("Episodes: Iterations")
     plt.ylabel("Sum of rewards during episodes")
     plt.savefig("QLearningFrozenLake.png")
+
+
 
 
 # Used to run the Q-learning method.
