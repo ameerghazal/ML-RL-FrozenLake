@@ -9,7 +9,7 @@ def run(episodes, render=False):
     # rewards: Reach goal=+1, Reach hole=0, Reach frozen=0
 
     # Create the map and store.
-    env = gym.make('FrozenLake-v1', desc=None, map_name="4x4", is_slippery=True, render_mode="human" if render else None)
+    env = gym.make('FrozenLake-v1', desc=None, map_name="4x4", is_slippery=False, render_mode="human" if render else None)
 
     # Initializes an array 16 x 4 with zeroes; Q(s,a) for all state and actions = 0
     Q = np.zeros((env.observation_space.n, env.action_space.n))
@@ -33,6 +33,9 @@ def run(episodes, render=False):
     average_reward_per_episode = np.zeros(episodes)
     successful_episodes = 0
     steps_to_reach_goal = []
+
+    # Initialize epsilon values for plotting
+    epsilon_values = np.linspace(1, 0, episodes)
 
     for i in range(episodes):
 
@@ -91,13 +94,36 @@ def run(episodes, render=False):
     # Calculate average steps taken to reach the goal.
     average_steps_to_reach_goal = np.mean(steps_to_reach_goal) if steps_to_reach_goal else 0
 
+    # Plot rewards and epsilon decay
+    sum_rewards = np.zeros(episodes)
+    for t in range(episodes):
+        sum_rewards[t] = np.sum(rewardsPerEpisode[max(0,t-100):(t+1)])
+    plt.plot(sum_rewards, label='Sum of rewards during episodes')
+    plt.plot(epsilon_values, label='Epsilon decay', linestyle='--')
+    plt.xlabel("Episodes: Iterations")
+    plt.ylabel("Rewards/Epsilon")
+    plt.legend()
+    plt.show()
+
     # Return evaluation metrics.
-    return average_reward_per_episode, percentage_successful_episodes, average_steps_to_reach_goal
+    return average_reward_per_episode, percentage_successful_episodes, average_steps_to_reach_goal, epsilon_values
 
 # Used to run the Q-learning method and evaluate its performance.
 if __name__ == '__main__':
     episodes = 15000
-    average_reward_per_episode, percentage_successful_episodes, average_steps_to_reach_goal = run(episodes)
+    average_reward_per_episode, percentage_successful_episodes, average_steps_to_reach_goal, epsilon_values = run(episodes)
+    
+
+    # Plot rewards and epsilon decay
+    plt.figure(figsize=(10, 6))
+    plt.plot(average_reward_per_episode, label='Average Reward per Episode')
+    plt.plot(epsilon_values)
+    plt.xlabel("Episodes: Iterations")
+    plt.ylabel("Average Reward per Episode")
+    plt.ylim(0, 1)  # Set y-axis limits between 0 and 1
+    plt.legend()
+    plt.show()
+
 
     # Print evaluation metrics.
     print(f"Average Reward per Episode: {average_reward_per_episode[-1]}")

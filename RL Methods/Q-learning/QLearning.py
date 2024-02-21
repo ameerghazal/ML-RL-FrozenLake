@@ -3,11 +3,10 @@ import gymnasium as gym
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 # Run function, in which we pass in the number of episodes.
 def run(episodes, render=False):
     # actions: 0=left, 1=down, 2=right, 3=up
-    # rewards: Reach goal=+1, Reach hole=0, Reach frozen=0
+    # rewards: Reach goal=+1, Reach hole=0, Reach frozen=0e
 
     # Create the map and store.
     env = gym.make('FrozenLake-v1', desc=None, map_name="4x4", is_slippery=True, render_mode="human" if render else None)
@@ -21,15 +20,14 @@ def run(episodes, render=False):
     # gamma or discount factor
     gamma = 0.9
 
-
     #100% random actions; epsilon is the value that determines exploration vs. explotation.
     epsilon = 1
-    #epsilon decay rate | 1/0.0001 = 10,000
-    epsilon_decay = 0.0001
-    randomNum = np.random.default_rng()
+    epsilon_decay = 0.0001 # epsilon decay rate | 1/0.0001 = 10,000
+    randomNum = np.random.default_rng() # Random number, for the conditonal.
 
-    # For graph; intialize the rewards in every episode to 0.
+    # For graph: intialize the rewards, epsilons to 0.
     rewardsPerEpisode = np.zeros(episodes)
+    epsilonPerEp = np.zeros(episodes)
 
     # Initalize list of zeros, holding the average reward per epiosde.
     avgRewardPerEp = np.zeros(episodes)
@@ -68,6 +66,9 @@ def run(episodes, render=False):
             # Increment our step counter 
             steps += 1
 
+        # Note the epsilon used for the episode.     
+        epsilonPerEp[i] = epsilon
+
         # After each episode, we decrease our epsilon until it gets to 0.
         epsilon = max(epsilon - epsilon_decay, 0)
 
@@ -99,18 +100,70 @@ def run(episodes, render=False):
     print(f"Percentage of Successful Episodes: {percentage_successful_episodes}%")
     print(f"Average Steps to Reach Goal: {average_steps_to_reach_goal}")
 
-
     # Plot of the rewards vs. Episodes; running sum of the rewards of every 100 episodes.
     sum_rewards = np.zeros(episodes)
     for t in range(episodes):
         sum_rewards[t] = np.sum(rewardsPerEpisode[max(0,t-100):(t+1)])
-    plt.plot(sum_rewards)
-    plt.xlabel("Episodes: Iterations")
-    plt.ylabel("Sum of rewards during episodes")
-    plt.savefig("QLearningFrozenLake.png")
+    
+    # Create a sub-plot.
+    fig, ax1 = plt.subplots()
 
+    # Create a second y-axis
+    ax1.plot(epsilonPerEp, label='Epsilon Values', color='r')
+    ax1.set_xlabel('Episodes: Iterations')
+    ax1.set_ylabel('Epsilon Values', color='r')
+    ax1.tick_params('y', colors='r')
+
+    # Plot sum of rewards on the first y-axis
+    ax2 = ax1.twinx() # Used for the graphing software of both in one.
+    ax2.plot(sum_rewards, label='Sum of Rewards', color='b')
+    ax2.set_ylabel('Sum of rewards during episodes', color='b')
+    ax2.tick_params('y', colors='b')
+
+    # Combine legends from both axes
+    lines, labels = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax2.legend(lines + lines2, labels + labels2, loc='upper center')
+
+    plt.savefig("RL Methods/Q-learning/QLearningFrozenLake.png")
+    #plt.show()
 
 # Used to run the Q-learning method.
 if __name__ == '__main__':
     run(15000)
+
+
+'''
+# import pickle
+
+# Added to arguments.
+is_training = true
+
+# Added under the env create.
+if(is_training):
+    q = np.zeros((env.observation_space.n, env.action_space.n)) # init a 64 x 4 array
+else:
+    f = open('frozen_lake8x8.pkl', 'rb')
+    q = pickle.load(f)
+    f.close()
+
+# Added under the plotting, to store the q-table.
+if is_training:
+        f = open("frozen_lake8x8.pkl","wb")
+        pickle.dump(q, f)
+        f.close()
+
+
+# For the two following if's, simply add the is_training to the condtional.
+if is_training and rng.random() < epsilon:
+    action = env.action_space.sample() # actions: 0=left,1=down,2=right,3=up
+else:
+    action = np.argmax(q[state,:])
+
+    new_state,reward,terminated,truncated,_ = env.step(action)
+
+if is_training:
+    q[state,action] = q[state,action] + learning_rate_a * (reward + discount_factor_g * np.max(q[new_state,:]) - q[state,action])
+
+'''
 

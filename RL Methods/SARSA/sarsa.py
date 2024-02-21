@@ -105,7 +105,7 @@ def run(episodes, render=False):
     plt.plot(sum_rewards)
     plt.xlabel("Episodes: Iterations")
     plt.ylabel("Sum of rewards during episodes")
-    plt.savefig("SarsaFrozenLake.png")
+    plt.savefig("RL Methods/SARSA/SarsaFrozenLake.png")
 
 
 
