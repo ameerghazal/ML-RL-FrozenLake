@@ -31,6 +31,12 @@ def run(episodes, render=False):
     # For graph; intialize the rewards in every episode to 0.
     rewardsPerEpisode = np.zeros(episodes)
 
+    # Initalize list of zeros, holding the average reward per epiosde.
+    avgRewardPerEp = np.zeros(episodes)
+    successful_episodes = 0  # Number of successful episodes, where the agent reaches the goal.
+    steps_to_reach_goal = [] # List containing the number of steps to reach the goal per episode. 
+
+
     for i in range(episodes):
 
         #states 0:15
@@ -39,6 +45,8 @@ def run(episodes, render=False):
         terminated = False
         #True if steps is greater than 100
         truncated = False
+        # Counter for the number of steps in the episode, used for the average later.
+        steps = 0
 
         # This entire iteration is an episode.,=
         while(not terminated and not truncated):
@@ -48,7 +56,7 @@ def run(episodes, render=False):
             else:
                 action = np.argmax(Q[state,:]) # Otherwise, we take a greedy action based on the data we have from Q matrix (exploit). 
 
-            # Take actuin A, observe reward and next state.
+            # Take action A, observe reward and next state.
             new_state,reward,terminated,truncated,_ = env.step(action)
             
             # Q(s,a) = Q(s,a) + alpha(Reward + gamma * max(Q(s',a)) - Q(s,a))
@@ -56,6 +64,9 @@ def run(episodes, render=False):
 
             # S = S'
             state = new_state
+
+            # Increment our step counter 
+            steps += 1
 
         # After each episode, we decrease our epsilon until it gets to 0.
         epsilon = max(epsilon - epsilon_decay, 0)
@@ -67,23 +78,26 @@ def run(episodes, render=False):
 
         # Adds a reward update to our episode matrix. 
         if reward == 1:
-            rewardsPerEpisode[i] = 1
+            rewardsPerEpisode[i] = 1 
+            successful_episodes += 1
+            steps_to_reach_goal.append(steps) # Will push the number of steps taken to reach the goal for the specific episode. 
+        
+        # Calculate average reward per episode and store it in the array at index i.
+        avgRewardPerEp[i] = np.mean(rewardsPerEpisode[:i+1])
 
-    '''
-    # Evaluate policy
-    total_reward = 0
-    num_episodes = 100
-    for _ in range(num_episodes):
-        state = env.reset()
-        done = False
-        while not done:
-            action = np.argmax(Q[state, :])
-            state, reward, done, _ = env.step(action)
-            total_reward += reward
-
-    print("Average reward:", total_reward / num_episodes)
-    '''
+    # Close the environment.
     env.close()
+
+    # Calculate the percentage of successful episodes.
+    percentage_successful_episodes = (successful_episodes / episodes) * 100
+
+    # Calculate the average steps taken to reach the goal; checks if the list is empty.
+    average_steps_to_reach_goal = np.mean(steps_to_reach_goal) if steps_to_reach_goal else 0
+
+    # Print evaluation metrics.
+    print(f"Average Reward per Episode: {avgRewardPerEp[-1]}")
+    print(f"Percentage of Successful Episodes: {percentage_successful_episodes}%")
+    print(f"Average Steps to Reach Goal: {average_steps_to_reach_goal}")
 
 
     # Plot of the rewards vs. Episodes; running sum of the rewards of every 100 episodes.
@@ -96,8 +110,7 @@ def run(episodes, render=False):
     plt.savefig("QLearningFrozenLake.png")
 
 
-
-
 # Used to run the Q-learning method.
 if __name__ == '__main__':
     run(15000)
+
