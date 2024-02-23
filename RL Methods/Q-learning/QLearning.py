@@ -117,7 +117,7 @@ def run(episodes, render=False):
     # Plot sum of rewards on the first y-axis
     ax2 = ax1.twinx() # Used for the graphing software of both in one.
     ax2.plot(sum_rewards, label='Sum of Rewards', color='b')
-    ax2.set_ylabel('Sum of rewards during episodes', color='b')
+    ax2.set_ylabel('Sum of rewards per 100 episodes', color='b')
     ax2.tick_params('y', colors='b')
 
     # Combine legends from both axes
@@ -131,7 +131,7 @@ def run(episodes, render=False):
 
 # Used to run the Q-learning method.
 if __name__ == '__main__':
-    run(20000)
+    run(15000)
 
 
 '''
