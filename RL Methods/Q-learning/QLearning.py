@@ -14,8 +14,8 @@ def run(episodes, render=False):
     # Initializes an array 16 x 4 with zeroes; Q(s,a) for all state and actions = 0
     Q = np.zeros((env.observation_space.n, env.action_space.n))
 
-    # alpha or learning rate or step-size
-    alpha = 0.9
+    # Alpha or learning rate or step-size (high alpha results in faster learning with potential oscillations, small alpha can result in more stability but slower learning).
+    alpha = 0.5
 
     # gamma or discount factor
     gamma = 0.9
@@ -125,12 +125,13 @@ def run(episodes, render=False):
     lines2, labels2 = ax2.get_legend_handles_labels()
     ax2.legend(lines + lines2, labels + labels2, loc='upper center')
 
-    plt.savefig("RL Methods/Q-learning/QLearningFrozenLake.png")
+    plt.title("Q-Learning Epsilon and Sum of Rewards vs. Episodes")
     #plt.show()
+    plt.savefig("RL Methods/Q-learning/QLearningEpsilon.png")
 
 # Used to run the Q-learning method.
 if __name__ == '__main__':
-    run(15000)
+    run(20000)
 
 
 '''
