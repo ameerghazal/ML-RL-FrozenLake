@@ -34,7 +34,6 @@ def run(episodes, render=False):
     successful_episodes = 0  # Number of successful episodes, where the agent reaches the goal.
     steps_to_reach_goal = [] # List containing the number of steps to reach the goal per episode. 
 
-
     for i in range(episodes):
 
         #states 0:15
