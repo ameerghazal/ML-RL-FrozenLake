@@ -10,7 +10,7 @@ def run(episodes, render=False):
     # rewards: Reach goal=+1, Reach hole=0, Reach frozen=0
 
     # Create the map and store.
-    env = gym.make('FrozenLake-v1', desc=None, map_name="4x4", is_slippery=True, render_mode="human" if render else None)
+    env = gym.make('FrozenLake-v1', desc=None, map_name="4x4", is_slippery=False, render_mode="human" if render else None)
 
     # Initializes an array 16 with all 16 states.
     V = np.zeros(env.observation_space.n)
@@ -49,7 +49,8 @@ def run(episodes, render=False):
        
        # The policy, given the state, chooses the action index that maximizes the sum of the products of the probailites, rewards, and the discounted next state. This is done for each possible next state resulting from taking different actions in the current state. The np.argmax function is then used to find the index corresponding to the action that yields the highest sum.
        policy[state] = np.argmax([sum([probability * (reward + gamma * V[nextState]) for probability, nextState, reward, _ in env.unwrapped.P[state][action]]) for action in range(env.action_space.n)]) # 
-    
+
+    print(V)
     print(policy)
   
 # Used to run the Dynamic method.
