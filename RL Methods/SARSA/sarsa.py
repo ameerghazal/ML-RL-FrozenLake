@@ -3,7 +3,6 @@ import gymnasium as gym
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 # Run function, in which we pass in the number of episodes.
 def run(episodes, render=False):
     # actions: 0=left, 1=down, 2=right, 3=up
@@ -144,18 +143,3 @@ def run(episodes, render=False):
 # Used to run the SARSA method.
 if __name__ == '__main__':
     run(15000)
-
-'''
-    # Evaluate policy
-    total_reward = 0
-    num_episodes = 100
-    for _ in range(num_episodes):
-        state = env.reset()
-        done = False
-        while not done:
-            action = np.argmax(Q[state, :])
-            state, reward, done, _ = env.step(action)
-            total_reward += reward
-
-    print("Average reward:", total_reward / num_episodes)
-'''

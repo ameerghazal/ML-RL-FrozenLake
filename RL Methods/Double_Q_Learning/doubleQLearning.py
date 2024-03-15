@@ -14,7 +14,7 @@ def decayFunction(epsilon, epsilonDecay, type="linear"):
     return epsilon - epsilonDecay # Last case, return linear-step decay.
 
 # Run function, in which we pass in the number of episodes.
-def run(episodes, decayParam = (1, 0.0001, "linear"), render=False):
+def doubleQ(episodes, decayParam = (1, 0.0001, "linear"), render=False):
     # actions: 0=left, 1=down, 2=right, 3=up
     # rewards: Reach goal=+1, Reach hole=0, Reach frozen=0
 
@@ -98,9 +98,9 @@ def run(episodes, decayParam = (1, 0.0001, "linear"), render=False):
     avgStepsToReachGoal = np.mean(stepsToReachGoal) if stepsToReachGoal else 0
 
     # Print evaluation metrics.
-    print(f"Average Reward per Episode: {avgRewardPerEp[-1]}")
-    print(f"Percentage of Successful Episodes: {percentageOfSuccessfulEpisodes}%")
-    print(f"Average Steps to Reach Goal: {avgStepsToReachGoal}")
+    # print(f"Average Reward per Episode: {avgRewardPerEp[-1]}")
+    # print(f"Percentage of Successful Episodes: {percentageOfSuccessfulEpisodes}%")
+    # print(f"Average Steps to Reach Goal: {avgStepsToReachGoal}")
 
     # Return the average total rewards per episode, for plotting.
     return avgRewardPerEp
@@ -109,18 +109,18 @@ def run(episodes, decayParam = (1, 0.0001, "linear"), render=False):
 if __name__ == '__main__':
     
     # Run the three function.
-    avgTotalReward_linear = run(20000, decayParam=(1, 0.0001, "linear"))
-    avgTotalReward_exponential = run(20000, decayParam=(1, 0.0001, "exponential"))
-    avgTotalReward_inverse = run(20000, decayParam=(1, 0.0001, "inverse"))
+    avgTotalReward_linear = doubleQ(20000, decayParam=(1, 0.0001, "linear"))
+    avgTotalReward_exponential = doubleQ(20000, decayParam=(1, 0.0001, "exponential"))
+    avgTotalReward_inverse = doubleQ(20000, decayParam=(1, 0.0001, "inverse"))
 
     # Plot the average total reward for each decay function
     plt.figure(figsize=(10, 6))
     plt.plot(avgTotalReward_linear, label='Linear Decay')
-    plt.plot(avgTotalReward_exponential, label='Exponential Decay')
-    plt.plot(avgTotalReward_inverse, label='Inverse Decay')
+    # plt.plot(avgTotalReward_exponential, label='Exponential Decay')
+    # plt.plot(avgTotalReward_inverse, label='Inverse Decay')
     plt.xlabel('Number of Episodes')
     plt.ylabel('Average Total Reward')
     plt.title('Average Total Reward vs. Number of Episodes for Different Decay Functions')
     plt.legend()
-    plt.savefig("RL Methods/Q-learning/Double-Q-Learning.png")
+    plt.savefig("RL Methods/Double-Q-learning/Double-Q-Learning.png")
     plt.show()
