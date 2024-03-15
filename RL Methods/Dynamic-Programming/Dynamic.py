@@ -81,7 +81,7 @@ def run(episodes, rewardFunction="default", render=False):
     # rewards: Reach goal=+1, Reach hole=0, Reach frozen=0
 
     # Create the map and store.
-    env = gym.make('FrozenLake-v1', desc=None, map_name="4x4", is_slippery=True, render_mode="human")
+    env = gym.make('FrozenLake-v1', desc=None, map_name="4x4", is_slippery=False, render_mode="human" if render else None)
 
     # Initializes an array 16 with all 16 states.
     V = np.zeros(env.observation_space.n)
